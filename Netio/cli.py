@@ -74,11 +74,11 @@ def netio_cli(argv):
 
 
     # TODO: Make URL scheme configurable.
-    url = 'https://{}/netio.json'.format(config['device'])
+    url = 'http://{}/netio.json'.format(config['device'])
     auth = ('write', config['password'])
     actions = create_output_actions(args)
 
-    device = Netio(url, auth_rw=auth, verify=cert)
+    device = Netio(url, auth_rw=auth, verify=None)
     device.set_outputs(actions)
 
 

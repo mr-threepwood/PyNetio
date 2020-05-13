@@ -2,5 +2,6 @@ build/
 dist/
 Netio.egg-info/
 __pycache__/
+yml/
 
 .*.swp
