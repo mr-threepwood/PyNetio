@@ -1,0 +1,4 @@
+device: https://netio-4c.netio-products.com:8443
+cert: ../pem/mynetio-example-net.pem
+username: demo
+password: demo

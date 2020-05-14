@@ -3,7 +3,7 @@ import requests
 import logging
 import json
 from enum import IntEnum
-from typing import List
+from typing import Dict, List
 
 from Netio.exceptions import CommunicationError, AuthError
 
@@ -43,13 +43,20 @@ class Device(object):
         raise NotImplementedError("The function has to be implemented")
 
     def get_output(self, id: int) -> OUTPUT:
-        response = self._get_ouputs()
-        return list(response)[id]
+        response = self._get_outputs()
+        return next(filter(lambda output: output.ID == id, response))
+
+    def get_outputs(self, ids: List[int]) -> List[OUTPUT]:
+        # Let's have a real collection of IDs for checking the response IDs
+        # against.
+        ids = set(ids)
+        response = self._get_outputs()
+        return [output for output in response if output.ID in ids]
 
     def set_output(self, id: int, action: ACTION = ACTION.NOCHANGE) -> None:
         self.set_outputs({id: action})
 
-    def set_outputs(self, actions: dict) -> None:
+    def set_outputs(self, actions: Dict[int, ACTION]) -> None:
         if self._write_access:
             self._set_states(actions)
         else:
@@ -115,14 +122,13 @@ class JsonDevice(Device):
 
         return self._parse_response(response)
 
-
     def _get(self) -> dict:
-        response = requests.get(self._url, auth=requests.auth.HTTPBasicAuth(self._user, self._pass),
+        response = requests.get(self._url,
+                                auth=requests.auth.HTTPBasicAuth(self._user, self._pass),
                                 verify=self._verify)
         return self._parse_response(response)
 
-
-    def _get_ouputs(self) -> List[Device.OUTPUT]:
+    def _get_outputs(self) -> List[Device.OUTPUT]:
         """
         Send empty GET request to the device.
         Parse out the output states according to specification.

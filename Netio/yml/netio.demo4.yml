@@ -1,0 +1,4 @@
+device: http://netio-4.netio-products.com:8080
+cert: None
+username: demo
+password: demo
